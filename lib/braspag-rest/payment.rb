@@ -3,6 +3,8 @@ module BraspagRest
   class Payment < Hashie::IUTrash
     include Hashie::Extensions::Coercion
 
+    attr_reader :response
+
     STATUS_AUTHORIZED = 1
     STATUS_CONFIRMED = 2
     STATUS_VOIDED = 10
@@ -55,7 +57,7 @@ module BraspagRest
     property :is_splitted, from: 'IsSplitted'
     property :return_message, from: 'ReturnMessage'
     property :return_code, from: 'ReturnCode'
-    
+
     property :voids, from: 'Voids'
     # property :charge_backs, from: 'Chargebacks'
 
@@ -71,7 +73,7 @@ module BraspagRest
       raise BraspagRest::NotSplittablePaymentError unless splitted?
       raise BraspagRest::NotCapturedError unless captured?
 
-      response = BraspagRest::Request.split(id, splits)
+      self.response = BraspagRest::Request.split(id, splits)
 
       if response.success?
         initialize_attributes(self.inverse_attributes.merge(response.parsed_body))
@@ -100,5 +102,9 @@ module BraspagRest
     def splitted?
       type == 'SplittedCreditCard'
     end
+
+    private
+
+    attr_writer :response
   end
 end
