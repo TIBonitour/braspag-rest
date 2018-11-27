@@ -429,6 +429,34 @@ describe BraspagRest::Payment do
         end
       end
 
+      context 'when the gateway returns success and the body contains errors' do
+        let(:parsed_body) do
+          {
+            "Status"=> 1,
+            "ReasonCode"=> 37,
+            "ReasonMessage"=> "SplitTransactionalError",
+            "ProviderReturnCode"=> "BP334",
+            "ProviderReturnMessage"=> "Capture aborted by Split transactional error",
+            "ReturnCode"=> "BP334",
+            "ReturnMessage"=> "Capture aborted by Split transactional error",
+            "SplitErrors"=> [
+                {
+                    "Code"=> 326,
+                    "Message"=> "Subordinate merchants cannot be duplicated"
+                }
+            ],
+            "Links"=> []
+          }
+        end
+
+        let(:response) { double(success?: false, parsed_body: parsed_body, body_errors: { "SplitErrors" => [{"Code"=> 326,"Message"=> "Subordinate merchants cannot be duplicated"}]})}
+
+        it 'returns false and fills the errors attribute' do
+          expect(splitted_payment.split([split1, split2])).to be_falsey
+          expect(splitted_payment.errors).to eq([{ code: 326, message: 'Subordinate merchants cannot be duplicated' }])
+        end
+      end
+
       context 'when the gateway returns a failure and the body is an Array' do
         let(:parsed_body) do
           [{ 'Code' => 123, 'Message' => 'MerchantOrderId cannot be null' }]
@@ -453,7 +481,7 @@ describe BraspagRest::Payment do
           }
         end
 
-        let(:response) { double(success?: false, parsed_body: parsed_body) }
+        let(:response) { double(success?: false, parsed_body: parsed_body, body_errors: {"Errors"=>[{"Message"=>"No one value can be negative"}]}) }
 
         it 'returns false and fills the errors attribute' do
           expect(splitted_payment.split([split1, split2])).to be_falsey

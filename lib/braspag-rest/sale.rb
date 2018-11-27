@@ -19,7 +19,7 @@ module BraspagRest
       if response.success?
         initialize_attributes(self.inverse_attributes.merge(response.parsed_body))
       else
-        initialize_errors(response.parsed_body) and return false
+        initialize_errors(response) and return false
       end
 
       payment.authorized?
@@ -31,7 +31,7 @@ module BraspagRest
       if response.success?
         self.payment.initialize_attributes(self.payment.inverse_attributes.merge(response.parsed_body))
       else
-        initialize_errors(response.parsed_body) and return false
+        initialize_errors(response) and return false
       end
 
       payment.captured?
@@ -45,7 +45,7 @@ module BraspagRest
       if response.success?
         reload
       else
-        initialize_errors(response.parsed_body) and return false
+        initialize_errors(response) and return false
       end
 
       response.success?
@@ -57,7 +57,7 @@ module BraspagRest
       if response.success?
         self.payment.initialize_attributes(response.parsed_body)
       else
-        initialize_errors(response.parsed_body) and return false
+        initialize_errors(response) and return false
       end
 
       payment.captured?

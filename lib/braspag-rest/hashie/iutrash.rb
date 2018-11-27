@@ -31,11 +31,11 @@ module Hashie
       value.respond_to?(:inverse_attributes) ? value.inverse_attributes : value
     end
 
-    def initialize_errors(errors)
-      if errors.is_a? [].class
-        @errors = errors.map { |error| { code: error['Code'], message: error['Message'] } }
+    def initialize_errors(response)
+      if response.parsed_body.is_a? [].class
+        @errors = response.parsed_body.map { |error| { code: error['Code'], message: error['Message'] } }
       else
-        @errors = errors['Errors'].map { |error| { code: error['Code'], message: error['Message'] } }
+        @errors = response.body_errors.values.flatten.map { |error| { code: error['Code'], message: error['Message'] } }
       end
     end
   end

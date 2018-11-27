@@ -78,7 +78,7 @@ module BraspagRest
       if response.success?
         initialize_attributes(self.inverse_attributes.merge(response.parsed_body))
       else
-        initialize_errors(response.parsed_body) and return false
+        initialize_errors(response) and return false
       end
       true
     end
