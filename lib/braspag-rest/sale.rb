@@ -64,7 +64,7 @@ module BraspagRest
     end
 
     def reload
-      if !request_id.nil? && payment && !payment.id.nil?
+      if payment && !payment.id.nil?
         reloaded_reference = self.class.find(request_id, payment.id)
         self.initialize_attributes(reloaded_reference.inverse_attributes)
       end
