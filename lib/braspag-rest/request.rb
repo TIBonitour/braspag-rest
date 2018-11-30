@@ -30,7 +30,10 @@ module BraspagRest
           timeout: config.request_timeout
         }
 
-        params.merge! payload: voids.inverse_attributes.to_json if voids
+        if voids
+          payload = { "VoidSplitPayments": voids.void_split_payments.map(&:inverse_attributes) }.to_json
+          params.merge! payload: payload
+        end
         
         execute_braspag_request do
           RestClient::Request.execute(
