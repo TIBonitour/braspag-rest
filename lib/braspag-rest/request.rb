@@ -31,7 +31,7 @@ module BraspagRest
         }
 
         if voids
-          payload = { "VoidSplitPayments": voids.void_split_payments.map(&:inverse_attributes) }.to_json
+          payload = { "VoidSplitPayments" => voids.void_split_payments.map(&:inverse_attributes) }.to_json
           params.merge! payload: payload
         end
         
