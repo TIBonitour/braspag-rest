@@ -18,6 +18,7 @@ module BraspagRest
 
     property :status, from: 'Status'
     property :fraud_analysis_reason_code, from: 'FraudAnalysisReasonCode'
+    property :score, from: 'Score'
 
     property :status_description, from: 'StatusDescription'
     property :total_order_amount, from: 'TotalOrderAmount'
